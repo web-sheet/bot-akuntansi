@@ -111,7 +111,7 @@ function setupMessageListener() {
                 try {  
 
                     const contact = await client.getContactById(senderId);                 
-                    const myWa = await fetchNumber()
+                    // const myWa = await fetchNumber()
 
                     // if (!myWa.includes(contact.number)) {
 
