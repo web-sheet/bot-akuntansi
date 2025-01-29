@@ -113,11 +113,11 @@ function setupMessageListener() {
                     const contact = await client.getContactById(senderId);                 
                     const myWa = await fetchNumber()
 
-                    if (!myWa.includes(contact.number)) {
+                    // if (!myWa.includes(contact.number)) {
 
-                        sendMessageToNumber(sender, "Maaf, anda bukan Admin")
-                        return
-                    }    
+                    //     sendMessageToNumber(sender, "Maaf, anda bukan Admin")
+                    //     return
+                    // }    
 
 
 
@@ -173,13 +173,13 @@ function setupMessageListener() {
      
         if (message.type === 'chat' && sender !== 'status@broadcast' ) {
 
-            const contact = await client.getContactById(senderId);                 
-            const myWa = await fetchNumber()
-            if (!myWa.includes(contact.number)) {
+            // const contact = await client.getContactById(senderId);                 
+            // const myWa = await fetchNumber()
+            // if (!myWa.includes(contact.number)) {
 
-                sendMessageToNumber(sender, "Maaf, anda bukan Admin")
-                return
-            }
+            //     sendMessageToNumber(sender, "Maaf, anda bukan Admin")
+            //     return
+            // }
 
             
             const sender = chat.id._serialized;  
