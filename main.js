@@ -137,12 +137,12 @@ function setupMessageListener() {
                     try {
 
                         const contact = await client.getContactById(senderId);                 
-                        const myWa = await fetchNumber()
-                        if (!myWa.includes(contact.number)) {
+                        // const myWa = await fetchNumber()
+                        // if (!myWa.includes(contact.number)) {
 
-                            sendMessageToNumber(sender, "Maaf, anda bukan Admin")
-                            return
-                        }    
+                        //     sendMessageToNumber(sender, "Maaf, anda bukan Admin")
+                        //     return
+                        // }    
 
 
                         const participants = await chat.participants;
@@ -255,23 +255,23 @@ async function fetchMessages() {
 
 
 
-async function fetchNumber() {
-    try {
-        const response = await fetch(`https://script.google.com/macros/s/AKfycbzxLvU0rODVYochtAYzy1lDQ0r9lSX2rwU0bmoKpJiDa-6i-O8V1fh5hpkWYr4dOviE/exec?action=myNumber`);
-        const data = await response.json();           
+// async function fetchNumber() {
+//     try {
+//         const response = await fetch(`https://script.google.com/macros/s/AKfycbzxLvU0rODVYochtAYzy1lDQ0r9lSX2rwU0bmoKpJiDa-6i-O8V1fh5hpkWYr4dOviE/exec?action=myNumber`);
+//         const data = await response.json();           
         
-        if (Array.isArray(data.myNumber)) {            
-            return data.myNumber;   
-        } else if (data.myNumber) {
-            return [data.myNumber];   
-        } else {
-            return []; // Return an empty array if no members found
-        }
-    } catch (error) {
-        console.error('Error fetching the message:', error);
-        return []; // Return an empty array on error
-    }
-}
+//         if (Array.isArray(data.myNumber)) {            
+//             return data.myNumber;   
+//         } else if (data.myNumber) {
+//             return [data.myNumber];   
+//         } else {
+//             return []; // Return an empty array if no members found
+//         }
+//     } catch (error) {
+//         console.error('Error fetching the message:', error);
+//         return []; // Return an empty array on error
+//     }
+// }
 
 
 
