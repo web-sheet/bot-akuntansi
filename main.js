@@ -66,7 +66,9 @@ client.on('ready', () => {
     }
 });
 
- 
+
+let apiUrl = 'https://script.google.com/macros/s/AKfycbzxLvU0rODVYochtAYzy1lDQ0r9lSX2rwU0bmoKpJiDa-6i-O8V1fh5hpkWYr4dOviE/exec' 
+
 function setupMessageListener() {
   
     client.on('message_create', async (message) => {
@@ -82,11 +84,13 @@ function setupMessageListener() {
             
         const messageBody = message.body;     
         const sender = message.from;
-        const senderId = message.author;           
+        const senderId = message.author;    
+        
+      
 
         if (!chat.isGroup){
             console.log("Ini chat Personal");
-            console.log(`Received message: ${messageBody}`); 
+            console.log(`Received message: ${messageBody} from ${contact}`   ); 
             
             if (messageBody.startsWith("hitung") || messageBody.startsWith("Hitung") || messageBody.startsWith("HITUNG")) {
                 const expression = messageBody.slice(7).trim();  
@@ -184,8 +188,8 @@ function setupMessageListener() {
             
             const sender = chat.id._serialized;  
             const groupName = chat.name;             
-            console.log(`Received message: ${messageBody}`);
-            await logMessageToGoogleSheets(sender, groupName, messageBody);
+            console.log(`Received message: ${messageBody} from ${senderId} in ${groupName}`);
+            await logMessageToGoogleSheets(sender, groupName, messageBody, senderId);
         }
 
     });   
@@ -215,7 +219,7 @@ function formatNumbersInString(input) {
 
 async function fetchReact() {
     try {
-        const response = await fetch(`https://script.google.com/macros/s/AKfycbzxLvU0rODVYochtAYzy1lDQ0r9lSX2rwU0bmoKpJiDa-6i-O8V1fh5hpkWYr4dOviE/exec?action=react`);
+        const response = await fetch(`${apiUrl}?action=react`);
         const data = await response.json();         
 
         if (Array.isArray(data.latestMessage)) {            
@@ -236,7 +240,7 @@ async function fetchReact() {
  
 async function fetchMessages() {
     try {
-        const response = await fetch(`https://script.google.com/macros/s/AKfycbzxLvU0rODVYochtAYzy1lDQ0r9lSX2rwU0bmoKpJiDa-6i-O8V1fh5hpkWYr4dOviE/exec?action=tag`);
+        const response = await fetch(`${apiUrl}?action=tag`);
         const data = await response.json();           
         
         if (Array.isArray(data.allMembers)) {            
@@ -344,12 +348,13 @@ client.on('disconnected', async (reason) => {
 });
 
 
-async function logMessageToGoogleSheets(sender, groupName, message) {
-    const url = 'https://script.google.com/macros/s/AKfycbzxLvU0rODVYochtAYzy1lDQ0r9lSX2rwU0bmoKpJiDa-6i-O8V1fh5hpkWYr4dOviE/exec'; // Replace with your Apps Script URL
+async function logMessageToGoogleSheets(sender, groupName, message, senderId) {
+    const url = apiUrl;  
     const payload = {
         sender: sender,
         groupName: groupName,
-        message: message
+        message: message,
+        senderId: senderId
     };
 
     try {
@@ -368,7 +373,6 @@ async function logMessageToGoogleSheets(sender, groupName, message) {
     }
 }
  
-
 
 
 
