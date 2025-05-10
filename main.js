@@ -41,10 +41,9 @@ app.post('/sendMessages', async (req, res) => {
     }
 });
 
-
 const client = new Client(
-      
-         { puppeteer: { headless: true, args: ['--no-sandbox', '--disable-setuid-sandbox'] } });
+
+         {    puppeteer: { headless: true, args: ['--no-sandbox', '--disable-setuid-sandbox'] } });
 
 app.get('/qr', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
@@ -66,9 +65,7 @@ client.on('ready', () => {
     }
 });
 
-
-let apiUrl = 'https://script.google.com/macros/s/AKfycbzxLvU0rODVYochtAYzy1lDQ0r9lSX2rwU0bmoKpJiDa-6i-O8V1fh5hpkWYr4dOviE/exec' 
-
+ 
 function setupMessageListener() {
   
     client.on('message_create', async (message) => {
@@ -81,17 +78,18 @@ function setupMessageListener() {
 
         const chat = await message.getChat();    
 
-            
+
         const messageBody = message.body;     
         const sender = message.from;
-        const senderId = message.author;    
-        
-      
+        const senderId = message.author;
+
+        console.log("ini no saya " + sender);
+   console.log("ini no saya " + senderId);    
 
         if (!chat.isGroup){
             console.log("Ini chat Personal");
-            console.log(`Received message: ${messageBody} from ${contact}`   ); 
-            
+            console.log(`Received message: ${messageBody}`); 
+
             if (messageBody.startsWith("hitung") || messageBody.startsWith("Hitung") || messageBody.startsWith("HITUNG")) {
                 const expression = messageBody.slice(7).trim();  
                 const result = calculateExpression(expression);
@@ -104,17 +102,17 @@ function setupMessageListener() {
             return
         }
 
-      
+
         console.log(`Received message: ${messageBody}`);   
 
   
-                   
+
         const messagereact = await fetchReact();      
  
             if (messagereact && messagereact.some(i => messageBody.toLowerCase() .includes(i.toLowerCase())) && chat.isGroup) {
                 try {  
 
-                    const contact = await client.getContactById(senderId);                 
+                    const contact = await client.getContactById(senderId);
                     // const myWa = await fetchNumber()
 
                     // if (!myWa.includes(contact.number)) {
@@ -132,15 +130,15 @@ function setupMessageListener() {
                 }
                 return;
             }    
-               
-                const tag = await fetchMessages();     
-              
-             
+
+ const tag = await fetchMessages();     
+
+
                 if (tag && tag.some(s => messageBody.toLowerCase().includes(s.toLowerCase())) && chat.isGroup) {
-                 
+
                     try {
 
-                        const contact = await client.getContactById(senderId);                 
+                        const contact = await client.getContactById(senderId);
                         // const myWa = await fetchNumber()
                         // if (!myWa.includes(contact.number)) {
 
@@ -156,7 +154,7 @@ function setupMessageListener() {
                                 id: participant.id._serialized,
                                 notify: participant.notify  || participant.id.user
                             };
-                        });              
+                        });
                         const mentionMessage = `@${mentions.map(m => m.notify).join(', @')}`;
                         console.log(`Mentioning participants: ${JSON.stringify(mentions)}`);
                         await sendMessageToNumber(sender, mentionMessage); 
@@ -165,7 +163,7 @@ function setupMessageListener() {
                     }
                     return;  
                 }
-                            
+
         if (messageBody.startsWith("hitung") || messageBody.startsWith("Hitung") || messageBody.startsWith("HITUNG")) {
             const expression = messageBody.slice(7).trim();  
             const result = calculateExpression(expression);
@@ -173,11 +171,9 @@ function setupMessageListener() {
             await sendMessageToNumber(sender, `Hasil: ${formatMessage} = ${result}`);
             return; 
         }
+   if (message.type === 'chat' && sender !== 'status@broadcast' ) {
 
-     
-        if (message.type === 'chat' && sender !== 'status@broadcast' ) {
-
-            // const contact = await client.getContactById(senderId);                 
+            // const contact = await client.getContactById(senderId);
             // const myWa = await fetchNumber()
             // if (!myWa.includes(contact.number)) {
 
@@ -185,11 +181,11 @@ function setupMessageListener() {
             //     return
             // }
 
-            
+
             const sender = chat.id._serialized;  
             const groupName = chat.name;             
-            console.log(`Received message: ${messageBody} from ${senderId} in ${groupName}`);
-            await logMessageToGoogleSheets(sender, groupName, messageBody, senderId);
+            console.log(`Received message: ${messageBody}`);
+            await logMessageToGoogleSheets(sender, groupName, messageBody);
         }
 
     });   
@@ -214,12 +210,10 @@ function formatNumbersInString(input) {
     const formattedString = input.replace(numberPattern, (match) => formatNumber(match));
 
     return formattedString;
-}
-
 
 async function fetchReact() {
     try {
-        const response = await fetch(`${apiUrl}?action=react`);
+        const response = await fetch(`https://script.google.com/macros/s/AKfycbzxLvU0rODVYochtAYzy1lDQ0r9lSX2rwU0bmoKpJiDa-6i-O8V1fh5hpkWYr4dOviE/exec?action=react`);
         const data = await response.json();         
 
         if (Array.isArray(data.latestMessage)) {            
@@ -240,9 +234,9 @@ async function fetchReact() {
  
 async function fetchMessages() {
     try {
-        const response = await fetch(`${apiUrl}?action=tag`);
+        const response = await fetch(`https://script.google.com/macros/s/AKfycbzxLvU0rODVYochtAYzy1lDQ0r9lSX2rwU0bmoKpJiDa-6i-O8V1fh5hpkWYr4dOviE/exec?action=tag`);
         const data = await response.json();           
-        
+
         if (Array.isArray(data.allMembers)) {            
             return data.allMembers;   
         } else if (data.allMembers) {
@@ -258,30 +252,7 @@ async function fetchMessages() {
 
 
 
-
-// async function fetchNumber() {
-//     try {
-//         const response = await fetch(`https://script.google.com/macros/s/AKfycbzxLvU0rODVYochtAYzy1lDQ0r9lSX2rwU0bmoKpJiDa-6i-O8V1fh5hpkWYr4dOviE/exec?action=myNumber`);
-//         const data = await response.json();           
-        
-//         if (Array.isArray(data.myNumber)) {            
-//             return data.myNumber;   
-//         } else if (data.myNumber) {
-//             return [data.myNumber];   
-//         } else {
-//             return []; // Return an empty array if no members found
-//         }
-//     } catch (error) {
-//         console.error('Error fetching the message:', error);
-//         return []; // Return an empty array on error
-//     }
-// }
-
-
-
-
-
-function calculateExpression(expression) {
+    function calculateExpression(expression) {
   
     const validExpression = /^[0-9+\-*/().\s%]+$/;  
     expression = expression.replace(/\s*x\s*/g, '*');
@@ -325,7 +296,7 @@ async function sendMessageToNumber(number, message) {
 
 client.initialize();
 
-client.on('disconnected', async (reason) => {
+    client.on('disconnected', async (reason) => {
     console.log('Client was logged out:', reason);
     await client.destroy();
     await client.initialize(); 
@@ -348,13 +319,13 @@ client.on('disconnected', async (reason) => {
 });
 
 
-async function logMessageToGoogleSheets(sender, groupName, message, senderId) {
-    const url = apiUrl;  
+async function logMessageToGoogleSheets(sender, groupName, message) {
+    const url = 'https://script.google.com/macros/s/AKfycbzxLvU0rODVYochtAYzy1lDQ0r9lSX2rwU0bmoKpJiDa-6i-O8V1fh5hpkWYr4dOviE/exec'; // Replace with your Apps Script URL
     const payload = {
         sender: sender,
         groupName: groupName,
-        message: message,
-        senderId: senderId
+        message: message
+
     };
 
     try {
@@ -366,13 +337,24 @@ async function logMessageToGoogleSheets(sender, groupName, message, senderId) {
             body: JSON.stringify(payload)
         });
 
-        const result = await response.json();
+            const result = await response.json();
         console.log('Message logged to Google Sheets:', result);
     } catch (error) {
         console.error('Error logging message to Google Sheets:', error);
     }
 }
  
+
+
+
+
+    
+        
+
+
+
+
+        
 
 
 
